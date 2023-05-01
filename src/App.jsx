@@ -63,7 +63,13 @@ function NewToDoForm({ inputText, onChangeInput, onInsertTodo }) {
 function Filter({ filterValue, onChangeFilter }) {
   const options = [{value: "Todos"}, {value: "Em aberto"}, {value: "Concluidos"}]
   const optionsList = options.map((option) => {
-    return <input key ={option.value} type="radio" name="filter" value={option.value} checked={option.value === filterValue} onChange={onChangeHandler}/>
+    return (
+        <label key={option.value} htmlFor={option.value}>
+          <input type="radio" name="filter" id={option.value} value={option.value} checked={option.value === filterValue} onChange={onChangeHandler}/>
+          {option.value}
+        </label>
+      
+    )
   })
   
   function onChangeHandler(event) {
@@ -103,5 +109,5 @@ const initialTodos = [
 
 /* A FAZERES
   [] Focar no input após inserir um novo item
-  [] Melhorar Filter
+  [] Melhorar Filter, se possível
 */
