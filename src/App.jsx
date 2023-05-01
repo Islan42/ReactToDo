@@ -9,12 +9,37 @@ export default function App() {
     const newTodo = {id: todos.length, string: todoString, finished: false}
     setTodos([...todos, newTodo])
   }
+  
+  function computeTodos() {
+    let filtered
+    switch(true) {
+      case filter === 'Em aberto': {
+        filtered = todos.filter((todo) => !todo.finished)
+        break
+      }
+      case filter === 'Concluidos': {
+        filtered = todos.filter((todo) => todo.finished)
+        break
+      }
+      default: {
+        const finished = todos.filter((todo) => todo.finished)
+        const opened = todos.filter((todo) => !todo.finished)
+        filtered = [...opened, ...finished]
+      }
+    }
+    return filtered
+  }
+  
+  const filteredTodos = computeTodos()
 
   return (
     <>
+      <h1>React ToDo</h1>
       <NewToDoForm inputText={newTodoString} onChangeInput={setNewTodoString} onInsertTodo={newTodoHandler}/>
-      <Filter onChangeFilter={setFilter} />
-      <TodoList todos={todos}/>
+      <Filter filterValue={filter} onChangeFilter={setFilter} />
+      <TodoList todos={filteredTodos}/>
+      <p>{filter}</p>
+      <p>{filteredTodos.toString()}</p>
     </>
   )
 }
@@ -24,6 +49,7 @@ function NewToDoForm({ inputText, onChangeInput, onInsertTodo }) {
     event.preventDefault()
     onInsertTodo(inputText)
     onChangeInput('')
+    //focus element again
   }
   
   return (
@@ -34,12 +60,19 @@ function NewToDoForm({ inputText, onChangeInput, onInsertTodo }) {
   )
 }
 
-function Filter({ onChangeFilter }) {
+function Filter({ filterValue, onChangeFilter }) {
+  const options = [{value: "Todos"}, {value: "Em aberto"}, {value: "Concluidos"}]
+  const optionsList = options.map((option) => {
+    return <input key ={option.value} type="radio" name="filter" value={option.value} checked={option.value === filterValue} onChange={onChangeHandler}/>
+  })
+  
+  function onChangeHandler(event) {
+    onChangeFilter(event.target.value)
+  }
+  
   return (
     <form>
-      <input type="radio" name="filter" value="Todos" />
-      <input type="radio" name="filter" value="Em aberto" />
-      <input type="radio" name="filter" value="Concluidos" />
+      {optionsList}
     </form>
   )
 }
@@ -63,11 +96,12 @@ function Todo({ todo }) {
 
 const initialTodos = [
   {id: 0, string: 'Mimir', finished: false},
-  {id: 1, string: 'Jogar Lol', finished: false}, 
+  {id: 1, string: 'Jogar Lol', finished: true}, 
   {id: 2, string: 'Estudar', finished: false}
 ]
 
 
 /* A FAZERES
   [] Focar no input após inserir um novo item
+  [] Melhorar Filter
 */
