@@ -9,6 +9,12 @@ export default function App() {
     const newTodo = {id: todos.length, string: todoString, finished: false}
     setTodos([...todos, newTodo])
   }
+  function changeFinishedHandler(todo){
+    const index = todos.indexOf(todo)
+    const newTodo = {id: todo.id, string: todo.string, finished: !todo.finished}
+    const newTodos = [...todos.slice(0,index), newTodo, ...todos.slice(index + 1)]
+    setTodos(newTodos)
+  }
   
   function computeTodos() {
     let filtered
@@ -37,7 +43,7 @@ export default function App() {
       <h1>React ToDo</h1>
       <NewToDoForm inputText={newTodoString} onChangeInput={setNewTodoString} onInsertTodo={newTodoHandler}/>
       <Filter filterValue={filter} onChangeFilter={setFilter} />
-      <TodoList todos={filteredTodos}/>
+      <TodoList todos={filteredTodos} onChangeFinished={changeFinishedHandler}/>
       <p>{filter}</p>
       <p>{filteredTodos.toString()}</p>
     </>
@@ -83,10 +89,11 @@ function Filter({ filterValue, onChangeFilter }) {
   )
 }
 
-function TodoList({ todos }) {
+function TodoList({ todos, onChangeFinished }) {
   const todoList = todos.map((todo) => {
-    return <Todo key={todo.id} todo={todo}/>
+    return <Todo key={todo.id} todo={todo} onChangeFinished={onChangeFinished}/>
   })
+    
   return(
     <ul>
       {todoList}
@@ -94,9 +101,20 @@ function TodoList({ todos }) {
   )
 }
 
-function Todo({ todo }) {
+function Todo({ todo, onChangeFinished }) {
+  //const [isChecked, setIsChecked] = useState(todo.finished)
+  
+  /*
+  function changeHandler() {
+    onChangeCheckbox(todo)
+  }
+  */
+  
   return (
-    <li>{todo.string}: {todo.finished.toString()}</li>
+    <li>
+      {todo.string}: {todo.finished.toString()}
+      <span><input type="checkbox" checked={todo.finished} onChange={() => onChangeFinished(todo)}/></span>
+    </li>
   )
 }
 
